@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventLitez</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+        }
+        .custom-bg {
+            background: linear-gradient(135deg, #1a1a1a, #1f1f1f);
+        }
+        .custom-card {
+            background: linear-gradient(135deg, #111827, #1f2937);
+            border: 1px solid #3b82f6;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .custom-input {
+            background-color: #2d3748;
+            color: #cbd5e0;
+        }
+        .icon-btn {
+            transition: color 0.2s ease;
+        }
+        .icon-btn:hover {
+            color: #3b82f6;
+        }
+        .bookmark-active {
+            color: #10b981; /* Green color for active bookmark */
+        }
+    </style>
+</head>
+<body class="bg-black text-white custom-bg">
+
+    <!-- Header Section -->
+    <header class="bg-gray-900 text-white p-6 text-center shadow-md">
+        <h1 class="text-4xl font-bold">EventLitez</h1>
+        <p class="text-lg mt-2 text-gray-400">Your simple event listing platform</p>
+    </header>
+
+    <!-- Main Content Section -->
+    <main class="container mx-auto mt-10 p-4">
+
+        <!-- Event Creation Form -->
+        <section class="custom-card rounded-lg p-8 mb-10">
+            <h2 class="text-3xl font-semibold mb-6 text-blue-400">Create a New Event</h2>
+            <form id="eventForm">
+                <div class="mb-6">
+                    <label class="block text-gray-400 mb-2" for="eventName">Event Name:</label>
+                    <input class="w-full p-3 custom-input rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" type="text" id="eventName" placeholder="Enter the event name" required>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-400 mb-2" for="eventDate">Event Date:</label>
+                    <input class="w-full p-3 custom-input rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" type="date" id="eventDate" required>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-400 mb-2" for="eventTime">Event Time:</label>
+                    <input class="w-full p-3 custom-input rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" type="time" id="eventTime" required>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-400 mb-2" for="eventLocation">Location:</label>
+                    <input class="w-full p-3 custom-input rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" type="text" id="eventLocation" placeholder="Enter the location" required>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-400 mb-2" for="eventDescription">Description:</label>
+                    <textarea class="w-full p-3 custom-input rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" id="eventDescription" rows="4" placeholder="Enter a description for the event" required></textarea>
+                </div>
+                <button class="bg-blue-600 text-white p-3 rounded-lg w-full hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105" type="submit">Create Event</button>
+            </form>
+        </section>
+
+        <!-- Event Listing Section -->
+        <section class="custom-card rounded-lg p-8">
+            <h2 class="text-3xl font-semibold mb-6 text-blue-400">Upcoming Events</h2>
+            <ul id="eventList" class="space-y-6">
+                <!-- Event Items will be inserted here -->
+            </ul>
+        </section>
+
+    </main>
+
+    <!-- JavaScript -->
+    <script>
+        document.getElementById('eventForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Get form values
+            const eventName = document.getElementById('eventName').value;
+            const eventDate = document.getElementById('eventDate').value;
+            const eventTime = document.getElementById('eventTime').value;
+            const eventLocation = document.getElementById('eventLocation').value;
+            const eventDescription = document.getElementById('eventDescription').value;
+
+            // Create a new event item
+            const eventItem = document.createElement('li');
+            eventItem.className = 'border border-gray-700 p-6 rounded-lg flex justify-between items-center hover:bg-gray-800 transition duration-300 ease-in-out transform hover:scale-105';
+
+            eventItem.innerHTML = `
+                <div>
+                    <strong class="text-xl">${eventName}</strong> <br> 
+                    <span class="text-blue-400">${eventDate}</span> at <span class="text-blue-400">${eventTime}</span> <br> 
+                    <span class="text-gray-400">Location: ${eventLocation}</span>
+                    <p class="mt-2 text-gray-300">${eventDescription}</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="icon-btn" onclick="toggleBookmark(this)">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5l7-2 7 2v14l-7 2-7-2V5z" />
+                        </svg>
+                    </button>
+                    <button class="icon-btn" onclick="deleteEvent(this)">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            `;
+
+            // Append to event list
+            document.getElementById('eventList').appendChild(eventItem);
+
+            // Clear form
+            document.getElementById('eventForm').reset();
+        });
+
+        function deleteEvent(button) {
+            const eventItem = button.closest('li');
+            eventItem.remove();
+        }
+
+        function toggleBookmark(button) {
+            const svg = button.querySelector('svg');
+            svg.classList.toggle('bookmark-active');
+        }
+    </script>
+</body>
+</html>
